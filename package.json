@@ -1,0 +1,22 @@
+{
+  "name": "humanvsrobot",
+  "version": "1.0.0",
+  "description": "Survey app to collect user ratings on various questions, comparing two different answers based on three criteria: Knowledge, Correctness, and Empathy.",
+  "main": "src/backend/api.js",
+  "scripts": {
+    "start": "node src/backend/api.js",
+    "start-frontend": "react-scripts start",
+    "start-backend": "node src/backend/api.js"
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "express": "^4.17.1",
+    "pg": "^8.6.0"
+  },
+  "devDependencies": {
+    "react-scripts": "^4.0.3"
+  },
+  "author": "",
+  "license": "ISC"
+}
