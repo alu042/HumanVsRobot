@@ -73,3 +73,23 @@ The purpose of this survey app is to collect user ratings on various questions, 
    node src/backend/models.js import <path_to_csv_file>
    ```
 4. The questions and answers will be imported into the database.
+
+### Exporting Survey Data
+1. Ensure the backend server is running.
+2. To export the survey data, run the following command:
+   ```bash
+   node src/backend/export.js
+   ```
+3. The exported data will be saved as a CSV file in the `exports` directory with a timestamp in the filename (e.g., `survey_data_2023-05-10_145623.csv`).
+4. The exported CSV file will contain the following columns:
+   - User ID
+   - Question
+   - Answer 1
+   - Answer 2
+   - Knowledge Rating (Answer 1)
+   - Correctness Rating (Answer 1)
+   - Empathy Rating (Answer 1)
+   - Knowledge Rating (Answer 2)
+   - Correctness Rating (Answer 2)
+   - Empathy Rating (Answer 2)
+   - User Comments

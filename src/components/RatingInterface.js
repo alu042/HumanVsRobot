@@ -1,57 +1,64 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const RatingInterface = ({ answer, criteria, onRatingChange }) => {
-  const [ratings, setRatings] = useState({
-    Knowledge: 0,
-    Correctness: 0,
-    Empathy: 0,
-    comments: '',
-  });
+const RatingInterface = ({ answer, criteria, onRatingChange, onCommentsChange }) => {
+  const [ratings, setRatings] = useState({});
+  const [comments, setComments] = useState('');
 
-  const handleRatingChange = (criteria, value) => {
+  const handleRatingChange = (criterion, value) => {
     setRatings((prevRatings) => ({
       ...prevRatings,
-      [criteria]: value,
+      [criterion]: value,
     }));
-    onRatingChange(answer, criteria, value);
+    onRatingChange(criterion, value);
   };
 
   const handleCommentsChange = (event) => {
-    const { value } = event.target;
-    setRatings((prevRatings) => ({
-      ...prevRatings,
-      comments: value,
-    }));
-    onRatingChange(answer, 'comments', value);
+    const value = event.target.value;
+    setComments(value);
+    onCommentsChange(value);
   };
 
   return (
-    <div>
-      <h2>{answer}</h2>
-      {['Knowledge', 'Correctness', 'Empathy'].map((criterion) => (
-        <div key={criterion}>
-          <label>{criterion}:</label>
-          <select
-            value={ratings[criterion]}
-            onChange={(e) => handleRatingChange(criterion, e.target.value)}
-          >
-            <option value="1">Very bad</option>
-            <option value="2">Bad</option>
-            <option value="3">Neutral</option>
-            <option value="4">Good</option>
-            <option value="5">Excellent</option>
-          </select>
+    <div className="rating-interface">
+      <h2>Answer:</h2>
+      <p>{answer}</p>
+      {criteria.map((criterion) => (
+        <div key={criterion} className="criterion">
+          <p>{criterion}:</p>
+          <div className="rating-options">
+            {[1, 2, 3, 4, 5].map((value) => (
+              <label key={value}>
+                <input
+                  type="radio"
+                  name={`${criterion}-rating-${answer}`}
+                  value={value}
+                  checked={ratings[criterion] === value}
+                  onChange={() => handleRatingChange(criterion, value)}
+                />
+                {value}
+              </label>
+            ))}
+          </div>
         </div>
       ))}
-      <div>
-        <label>Comments:</label>
+      <div className="comments-section">
+        <label htmlFor={`comments-${answer}`}>Comments:</label>
         <textarea
-          value={ratings.comments}
+          id={`comments-${answer}`}
+          value={comments}
           onChange={handleCommentsChange}
         />
       </div>
     </div>
   );
+};
+
+RatingInterface.propTypes = {
+  answer: PropTypes.string.isRequired,
+  criteria: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onRatingChange: PropTypes.func.isRequired,
+  onCommentsChange: PropTypes.func.isRequired,
 };
 
 export default RatingInterface;
