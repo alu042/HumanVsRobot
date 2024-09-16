@@ -1,148 +1,94 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
 import RatingInterface from './RatingInterface';
-import { useNavigate } from 'react-router-dom';
 
 const QuestionPage = () => {
-  const [allQuestions, setAllQuestions] = useState([]);
-  const [selectedQuestions, setSelectedQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [responses, setResponses] = useState([]);
   const { userData } = useContext(UserContext);
   const navigate = useNavigate();
+  const [selectedAnswers, setSelectedAnswers] = useState([]);
+  const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0);
+  const [responses, setResponses] = useState([]);
 
   const criteriaTranslations = {
-    'Knowledge': 'Kunnskap',
-    'Helpfulness': 'Hjelpsomhet',
-    'Empathy': 'Empati'
+    Knowledge: 'Kunnskap',
+    Helpfulness: 'Hjelpsomhet',
+    Empathy: 'Empati',
   };
 
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchAnswers = async () => {
       try {
-        const response = await fetch('/api/questions');
+        const response = await fetch('/api/answers');
         const data = await response.json();
-        setAllQuestions(data);
-        selectRandomQuestions(data);
+        setSelectedAnswers(data);
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        console.error('Error fetching answers:', error);
       }
     };
-    fetchQuestions();
+    fetchAnswers();
   }, []);
 
-  const selectRandomQuestions = (questions) => {
-    const shuffled = [...questions].sort(() => 0.5 - Math.random());
-    setSelectedQuestions(shuffled.slice(0, 10));
-  };
+  if (selectedAnswers.length === 0) {
+    return <div>Loading answers...</div>;
+  }
 
-  const handleRatingChange = (answerIndex, criterion, value) => {
+  const currentAnswer = selectedAnswers[currentAnswerIndex];
+
+  const handleRatingChange = (criterion, value) => {
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
-      const questionResponse = newResponses[currentQuestionIndex] || { 
-        questionId: selectedQuestions[currentQuestionIndex].question_id, 
-        ratings: []
+      newResponses[currentAnswerIndex] = {
+        answerId: currentAnswer.answer_id,
+        criteria: {
+          ...(newResponses[currentAnswerIndex]?.criteria || {}),
+          [criterion]: value,
+        },
+        comments: newResponses[currentAnswerIndex]?.comments || '',
       };
-      
-      // Get the answerId
-      const answerId = selectedQuestions[currentQuestionIndex].answers[answerIndex].answer_id;
-      
-      // Find existing rating or create new one
-      let answerRating = questionResponse.ratings.find(r => r.answerId === answerId);
-      if (!answerRating) {
-        answerRating = { 
-          answerId, 
-          criteria: {}, 
-          comments: '' 
-        };
-        questionResponse.ratings.push(answerRating);
-      }
-      
-      // Update the criteria
-      answerRating.criteria[criterion] = value;
-      
-      // Update the questionResponse and responses
-      newResponses[currentQuestionIndex] = questionResponse;
       return newResponses;
     });
   };
 
-  const handleCommentsChange = (answerIndex, comments) => {
+  const handleCommentsChange = (comments) => {
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
-      const questionResponse = newResponses[currentQuestionIndex] || { 
-        questionId: selectedQuestions[currentQuestionIndex].question_id, 
-        ratings: []
+      newResponses[currentAnswerIndex] = {
+        answerId: currentAnswer.answer_id,
+        criteria: newResponses[currentAnswerIndex]?.criteria || {},
+        comments,
       };
-      
-      // Get the answerId
-      const answerId = selectedQuestions[currentQuestionIndex].answers[answerIndex].answer_id;
-      
-      // Find existing rating or create new one
-      let answerRating = questionResponse.ratings.find(r => r.answerId === answerId);
-      if (!answerRating) {
-        answerRating = { 
-          answerId, 
-          criteria: {}, 
-          comments: '' 
-        };
-        questionResponse.ratings.push(answerRating);
-      }
-      
-      // Update the comments
-      answerRating.comments = comments;
-      
-      // Update the questionResponse and responses
-      newResponses[currentQuestionIndex] = questionResponse;
       return newResponses;
     });
   };
 
-  const isCurrentQuestionFullyRated = () => {
-    const currentResponse = responses[currentQuestionIndex];
+  const isCurrentAnswerFullyRated = () => {
+    const currentResponse = responses[currentAnswerIndex];
     if (!currentResponse) return false;
-    
-    // Ensure ratings array doesn't contain undefined or null values
-    const allRatingsAreValid = currentResponse.ratings.every(rating => rating && rating.criteria);
-    
-    if (!allRatingsAreValid) return false;
-    
-    const allCriteriaRated = currentResponse.ratings.every(rating => 
-      Object.keys(rating.criteria).length === Object.keys(criteriaTranslations).length
-    );
-    
-    return currentResponse.ratings.length === selectedQuestions[currentQuestionIndex].answers.length && allCriteriaRated;
+
+    const allCriteriaRated =
+      Object.keys(currentResponse.criteria).length ===
+      Object.keys(criteriaTranslations).length;
+
+    return allCriteriaRated;
   };
 
-  const nextQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-  };
-
-  const skipQuestion = () => {
-    setResponses((prevResponses) => {
-      const newResponses = [...prevResponses];
-      newResponses[currentQuestionIndex] = null;
-      return newResponses;
-    });
-
-    // Check if this is the last question
-    if (currentQuestionIndex === selectedQuestions.length - 1) {
-      finishSurvey();
+  const nextAnswer = () => {
+    if (currentAnswerIndex < selectedAnswers.length - 1) {
+      setCurrentAnswerIndex((prevIndex) => prevIndex + 1);
     } else {
-      nextQuestion();
+      finishSurvey();
     }
   };
 
   const finishSurvey = async () => {
-    const filteredResponses = responses.filter(response => response !== null);
-    console.log('Survey Complete', JSON.stringify(filteredResponses, null, 2));
     try {
       await fetch('/api/ratings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: userData.userId,
-          responses: filteredResponses,
+          responses,
         }),
       });
       navigate('/progress');
@@ -151,50 +97,33 @@ const QuestionPage = () => {
     }
   };
 
-  if (selectedQuestions.length === 0) {
-    return <div>Loading questions...</div>;
-  }
-
-  const currentQuestion = selectedQuestions[currentQuestionIndex];
-
   return (
     <div className="question-page">
-      <h1>Spørsmål {currentQuestionIndex + 1} av 10</h1>
-      <p className="question-text">{currentQuestion.question_text}</p>
-      <div className="answers-container">
-        {currentQuestion.answers.map((answer, idx) => (
-          <RatingInterface
-            key={`${currentQuestionIndex}-${answer.answer_id}`}
-            answer={answer.answer_text}
-            answerId={answer.answer_id}
-            criteria={Object.keys(criteriaTranslations)}
-            criteriaTranslations={criteriaTranslations}
-            onRatingChange={(criterion, value) => handleRatingChange(idx, criterion, value)}
-            onCommentsChange={(comments) => handleCommentsChange(idx, comments)}
-          />
-        ))}
+      <h1>
+        Spørsmål {currentAnswerIndex + 1} av {selectedAnswers.length}
+      </h1>
+      <p className="question-text">{currentAnswer.question_text}</p>
+      <div className="answer-container">
+        <RatingInterface
+          key={currentAnswer.answer_id}
+          answer={currentAnswer.answer_text}
+          answerId={currentAnswer.answer_id}
+          criteria={Object.keys(criteriaTranslations)}
+          criteriaTranslations={criteriaTranslations}
+          onRatingChange={handleRatingChange}
+          onCommentsChange={handleCommentsChange}
+        />
       </div>
       <div className="navigation-buttons">
-        <button className="skip-button" onClick={skipQuestion}>
-          {currentQuestionIndex === selectedQuestions.length - 1 ? 'Fullfør undersøkelsen' : 'Hopp over spørsmål'}
+        <button
+          className="next-button"
+          onClick={nextAnswer}
+          disabled={!isCurrentAnswerFullyRated()}
+        >
+          {currentAnswerIndex < selectedAnswers.length - 1
+            ? 'Neste svar'
+            : 'Fullfør undersøkelsen'}
         </button>
-        {currentQuestionIndex < selectedQuestions.length - 1 ? (
-          <button 
-            className="next-button" 
-            onClick={nextQuestion} 
-            disabled={!isCurrentQuestionFullyRated()}
-          >
-            Neste spørsmål
-          </button>
-        ) : (
-          <button 
-            className="finish-button" 
-            onClick={finishSurvey} 
-            disabled={!isCurrentQuestionFullyRated()}
-          >
-            Fullfør undersøkelsen
-          </button>
-        )}
       </div>
     </div>
   );

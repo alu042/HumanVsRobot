@@ -37,9 +37,9 @@ const LandingPage = () => {
     <div className="landing-page">
       <h1>Velkommen!</h1>
       <p>
-        Spørreundersølsensen samler inn dine vurderinger av to mulige svar på hvert spørsmål. 
-        Du gir dine vurderinger i henhold til tre kriterier: kunnskap, hjelpsomhet og empati.
-      </p>
+    Spørreundersøkelsen samler inn dine vurderinger av svar på hvert spørsmål. 
+    Du gir dine vurderinger i henhold til tre kriterier: kunnskap, hjelpsomhet og empati.
+  </p>
 
       <p>
         Hva vi er ute etter. 
