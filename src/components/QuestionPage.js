@@ -30,7 +30,7 @@ const QuestionPage = () => {
   }, []);
 
   if (selectedAnswers.length === 0) {
-    return <div>Loading answers...</div>;
+    return <div className="loading">Loading answers...</div>;
   }
 
   const currentAnswer = selectedAnswers[currentAnswerIndex];
@@ -48,7 +48,6 @@ const QuestionPage = () => {
       return newResponses;
     });
   };
-
 
   const isCurrentAnswerFullyRated = () => {
     const currentResponse = responses[currentAnswerIndex];
@@ -87,31 +86,37 @@ const QuestionPage = () => {
 
   return (
     <div className="question-page">
-      <h1>
-        Spørsmål {currentAnswerIndex + 1} av {selectedAnswers.length}
-      </h1>
-      <p className="question-text">{currentAnswer.question_text}</p>
-      <div className="answer-container">
-        <RatingInterface
-          key={currentAnswer.answer_id}
-          answer={currentAnswer.answer_text}
-          answerId={currentAnswer.answer_id}
-          criteria={Object.keys(criteriaTranslations)}
-          criteriaTranslations={criteriaTranslations}
-          onRatingChange={handleRatingChange}
-        />
-      </div>
-      <div className="navigation-buttons">
-        <button
-          className="next-button"
-          onClick={nextAnswer}
-          disabled={!isCurrentAnswerFullyRated()}
-        >
-          {currentAnswerIndex < selectedAnswers.length - 1
-            ? 'Neste svar'
-            : 'Fullfør undersøkelsen'}
-        </button>
-      </div>
+      <header className="question-header">
+        <h1 className="question-title">
+          Spørsmål {currentAnswerIndex + 1} av {selectedAnswers.length}
+        </h1>
+      </header>
+      <main className="question-content">
+        <p className="question-text">{currentAnswer.question_text}</p>
+        <div className="answer-container">
+          <RatingInterface
+            key={currentAnswer.answer_id}
+            answer={currentAnswer.answer_text}
+            answerId={currentAnswer.answer_id}
+            criteria={Object.keys(criteriaTranslations)}
+            criteriaTranslations={criteriaTranslations}
+            onRatingChange={handleRatingChange}
+          />
+        </div>
+      </main>
+      <footer className="question-footer">
+        <div className="navigation-buttons">
+          <button
+            className="next-button"
+            onClick={nextAnswer}
+            disabled={!isCurrentAnswerFullyRated()}
+          >
+            {currentAnswerIndex < selectedAnswers.length - 1
+              ? 'Neste svar'
+              : 'Fullfør undersøkelsen'}
+          </button>
+        </div>
+      </footer>
     </div>
   );
 };
