@@ -42,27 +42,44 @@ router.get('/questions', async (req, res) => {
   }
 });
 
+// Get answers with their questions
+router.get('/answers', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        a.id AS answer_id,
+        a.answer_text,
+        q.id AS question_id,
+        q.question_text,
+        a.source
+      FROM answers a
+      JOIN questions q ON a.question_id = q.id
+      ORDER BY RANDOM()
+      LIMIT 10
+    `);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching answers:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Store user ratings and comments
 router.post('/ratings', async (req, res) => {
   const { userId, responses } = req.body;
-  console.log('Received userId:', userId);
-  console.log('Received responses:', JSON.stringify(responses, null, 2));
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     for (const response of responses) {
-      const questionId = response.questionId;
-      for (const rating of response.ratings) {
-        const { answerId, criteria, comments } = rating;
-        await insertRating(
-          userId,
-          answerId,
-          criteria.Knowledge,
-          criteria.Helpfulness,
-          criteria.Empathy,
-          comments
-        );
-      }
+      const { answerId, criteria, comments } = response;
+      await insertRating(
+        userId,
+        answerId,
+        criteria.Knowledge,
+        criteria.Helpfulness,
+        criteria.Empathy,
+        comments
+      );
     }
     await client.query('COMMIT');
     res.json({ message: 'Ratings saved successfully' });
