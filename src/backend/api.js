@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('./database');
-const { insertUser, insertRating } = require('./models');
+const { insertUser, insertRating, insertUserFeedback } = require('./models');
 
 // Middleware to parse JSON bodies
 router.use(express.json());
@@ -71,14 +71,13 @@ router.post('/ratings', async (req, res) => {
   try {
     await client.query('BEGIN');
     for (const response of responses) {
-      const { answerId, criteria, comments } = response;
+      const { answerId, criteria } = response;
       await insertRating(
         userId,
         answerId,
         criteria.Knowledge,
         criteria.Helpfulness,
-        criteria.Empathy,
-        comments
+        criteria.Empathy
       );
     }
     await client.query('COMMIT');
@@ -89,6 +88,18 @@ router.post('/ratings', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   } finally {
     client.release();
+  }
+});
+
+// User feedback route
+router.post('/feedback', async (req, res) => {
+  const { userId, feedback } = req.body;
+  try {
+    await insertUserFeedback(userId, feedback);
+    res.json({ message: 'Feedback submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

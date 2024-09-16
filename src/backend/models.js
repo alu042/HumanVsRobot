@@ -15,12 +15,12 @@ const insertUser = async (ageGroup, gender, demographicData) => {
 };
 
 // Insert a new rating
-const insertRating = async (userId, answerId, knowledge, helpfulness, empathy, comments) => {
+const insertRating = async (userId, answerId, knowledge, helpfulness, empathy) => {
   try {
     await pool.query(
-      `INSERT INTO ratings (user_id, answer_id, knowledge, helpfulness, empathy, comments)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [userId, answerId, knowledge, helpfulness, empathy, comments]
+      `INSERT INTO ratings (user_id, answer_id, knowledge, helpfulness, empathy)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [userId, answerId, knowledge, helpfulness, empathy]
     );
   } catch (error) {
     console.error('Error inserting rating:', error);
@@ -28,7 +28,21 @@ const insertRating = async (userId, answerId, knowledge, helpfulness, empathy, c
   }
 };
 
+// Insert user feedback
+const insertUserFeedback = async (userId, feedback) => {
+  try {
+    await pool.query(
+      'INSERT INTO user_feedback (user_id, feedback) VALUES ($1, $2)',
+      [userId, feedback]
+    );
+  } catch (error) {
+    console.error('Error inserting user feedback:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   insertUser,
   insertRating,
+  insertUserFeedback,
 };

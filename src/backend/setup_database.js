@@ -27,14 +27,20 @@ CREATE TABLE IF NOT EXISTS users (
   demographic_data TEXT
 );
 
+CREATE TABLE IF NOT EXISTS user_feedback (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  feedback TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS ratings (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
   answer_id INTEGER REFERENCES answers(id),
   knowledge INTEGER,
   helpfulness INTEGER,
-  empathy INTEGER,
-  comments TEXT
+  empathy INTEGER
 );
 `;
 
