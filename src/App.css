@@ -1,198 +1,189 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f7f7;
-    margin: 0;
-  }
-  
-  h1, h2 {
-    color: #333;
-  }
-  
-  /* Landing Page Styles */
-  .landing-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .landing-page .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .landing-page label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .landing-page select {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-  }
-  
-  .instructions {
-    background-color: #e9f5ff;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 5px;
-  }
-  
-  .start-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .start-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Question Page Styles */
-  .question-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .question-text {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-  }
-  
-  .navigation-buttons {
-    margin-top: 20px;
-  }
-  
-  .navigation-buttons button {
-    padding: 10px 20px;
-    margin-right: 10px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .navigation-buttons button:hover {
-    background-color: #218838;
-  }
-  
-  /* Rating Interface Styles */
-  .rating-interface {
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-  }
-  
-  .rating-interface h2 {
-    margin-top: 0;
-  }
-  
-  .criterion {
-    margin-bottom: 15px;
-  }
-  
-  .rating-options label {
-    margin-right: 10px;
-  }
-  
-  .comments-section label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .comments-section textarea {
-    width: 100%;
-    height: 80px;
-    padding: 8px;
-    box-sizing: border-box;
-  }
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+}
 
-  /* Question Page Styles */
+h1, h2 {
+  color: #333;
+}
+
+/* Landing Page Styles */
+.landing-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.landing-page .form-group {
+  margin-bottom: 15px;
+}
+
+.landing-page label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.landing-page select {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.instructions {
+  background-color: #e9f5ff;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 5px;
+}
+
+.start-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.start-button:hover {
+  background-color: #0056b3;
+}
+
+/* Question Page Styles */
 .question-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .question-text {
-    font-size: 1.2em;
-    margin-bottom: 20px;
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.question-text {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.answers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rating-interface {
+  width: 100%;
+  background-color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.rating-interface h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.criterion {
+  margin-bottom: 20px;
+}
+
+.rating-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rating-options label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rating-options input[type="radio"] {
+  margin: 0;
+}
+
+.comments-section {
+  margin-top: 20px;
+}
+
+.comments-section label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.comments-section textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.navigation-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.skip-button {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.skip-button:hover {
+  background-color: #e0e0e0;
+}
+
+.next-button, .finish-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.next-button:hover, .finish-button:hover {
+  background-color: #45a049;
+}
+
+.next-button:disabled, .finish-button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.skip-button:focus,
+.next-button:focus,
+.finish-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+/* Progress Page Styles */
+.progress-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+@media (min-width: 992px) {
   .answers-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    flex-direction: row;
   }
-  
+
   .rating-interface {
-    width: 48%;
-    background-color: #fff;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    box-sizing: border-box;
+    width: calc(50% - 10px);
   }
-  
-  .navigation-buttons {
-    margin-top: 20px;
-  }
-  
-  .navigation-buttons button {
-    padding: 10px 20px;
-    margin-right: 10px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  .navigation-buttons button:hover {
-    background-color: #218838;
-  }
-  
-  .navigation-buttons button:disabled {
-    background-color: #6c757d;
-    cursor: not-allowed;
-  }
-  
-  /* Rating Interface Styles */
-  
-  .criterion {
-    margin-bottom: 15px;
-  }
-  
-  .rating-options label {
-    margin-right: 10px;
-  }
-  
-  .comments-section label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  .comments-section textarea {
-    width: 100%;
-    height: 80px;
-    padding: 8px;
-    box-sizing: border-box;
-  }
-
-
-  
-  /* Progress Page Styles */
-  .progress-page {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-  }
+}
