@@ -23,13 +23,16 @@ h1, h2 {
 .landing-page label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
 }
 
-.landing-page select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+.landing-page select,
+.landing-page input[type="radio"] {
+  margin-right: 5px;
+}
+
+.landing-page .radio-group {
+  display: flex;
+  gap: 15px;
 }
 
 .instructions {

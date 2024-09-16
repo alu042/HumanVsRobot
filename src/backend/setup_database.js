@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   age_group VARCHAR(10),
   gender VARCHAR(20),
+  healthcare_professional_type VARCHAR(50),
+  previous_participation BOOLEAN,
   demographic_data TEXT
 );
 

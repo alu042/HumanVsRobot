@@ -8,9 +8,9 @@ router.use(express.json());
 
 // User creation route
 router.post('/users', async (req, res) => {
-  const { ageGroup, gender } = req.body;
+  const { ageGroup, gender, healthcareProfessionalType, previousParticipation } = req.body;
   try {
-    const user = await insertUser(ageGroup, gender, null);
+    const user = await insertUser(ageGroup, gender, healthcareProfessionalType, previousParticipation, null);
     res.json({ userId: user.user_id });
   } catch (error) {
     console.error('Error creating user:', error);
