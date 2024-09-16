@@ -3,50 +3,42 @@
 ## Survey App
 
 ### Purpose
-The purpose of this survey app is to collect user ratings on various questions, comparing two different answers based on three criteria: Knowledge, Correctness, and Empathy.
+The purpose of this survey app is to collect user ratings on various answers, evaluating them based on three criteria: Knowledge, Helpfulness, and Empathy.
 
 ### App Structure
 
 #### Landing Page
 - Brief introduction to the survey's purpose
-- Basic user information collection (e.g., age group, gender, any relevant demographic data)
+- Basic user information collection
 - Clear instructions on how the rating process works
 
 #### Question Presentation
-- Display a single question at a time
-- Show the two different answers side-by-side or in a clear, distinguishable format
-- Present the three rating criteria (e.g., Knowledge, Correctness, Empathy)
+- Display a single question and answer at a time
+- Present the three rating criteria (Knowledge, Helpfulness, Empathy)
 
 #### Rating Interface
 - For each answer, allow users to provide a rating for each of the three criteria
-- Use a suitable rating scale (e.g., 1-5 stars, Likert scale) that is visually intuitive
-- Consider adding an optional text field for users to provide additional comments or feedback
+- Use a 5-point Likert scale (Veldig dårlig, Dårlig, Middels, Bra, Veldig bra)
 
 #### Progression & Submission
-- After rating a question, move users to the next one automatically
+- After rating an answer, move users to the next one automatically
 - Clearly indicate progress (e.g., "Question 2 of 5")
-- Once five questions are rated, present a submission button
-- Optionally, include a "Thank You" page upon submission
+- Once all answers are rated, present a submission button
+- Include a "Thank You" page upon submission with an option for additional feedback
 
 ### Backend & Database
 
 #### Secure Data Storage
-- Choose a robust database solution (e.g., PostgreSQL, MySQL)
-- Implement proper data sanitization and validation to prevent SQL injection and other vulnerabilities
-- Encrypt sensitive user information (if collected) both in transit and at rest
+- Uses PostgreSQL database
+- Implements proper data sanitization and validation
 
 #### Data Structure
-- Create tables to store:
-  - User information (anonymized or minimally identifiable)
-  - Questions and their corresponding answers
-  - Ratings for each answer and criteria
-  - Any additional comments
+- Stores user information, questions, answers, and ratings
 
 #### API Endpoints
-- Develop secure API endpoints to handle:
-  - Fetching questions and answers
-  - Storing user ratings and comments
-  - Retrieving aggregated data for analysis (for your use)
+- Fetching questions and answers
+- Storing user ratings
+- Submitting user feedback
 
 ### Usage Instructions
 1. Clone the repository
@@ -80,16 +72,17 @@ The purpose of this survey app is to collect user ratings on various questions, 
    ```bash
    node src/backend/export.js
    ```
-3. The exported data will be saved as a CSV file in the `exports` directory with a timestamp in the filename (e.g., `survey_data_2023-05-10_145623.csv`).
-4. The exported CSV file will contain the following columns:
-   - User ID
-   - Question
-   - Answer 1
-   - Answer 2
-   - Knowledge Rating (Answer 1)
-   - Correctness Rating (Answer 1)
-   - Empathy Rating (Answer 1)
-   - Knowledge Rating (Answer 2)
-   - Correctness Rating (Answer 2)
-   - Empathy Rating (Answer 2)
-   - User Comments
+3. The exported data will be saved as a CSV file in the `exports` directory with a timestamp in the filename.
+4. The exported CSV file will contain user ratings and feedback.
+
+### Technologies Used
+- Frontend: React, React Router
+- Backend: Node.js, Express
+- Database: PostgreSQL
+- Additional libraries: bcrypt, cors, csv-parser, csv-writer, dotenv
+
+### Deployment
+The app is configured for deployment on Heroku. Use the following command to build the app for production:
+```bash
+npm run build
+```
