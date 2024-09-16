@@ -1,22 +1,47 @@
 {
   "name": "humanvsrobot",
   "version": "1.0.0",
-  "description": "Survey app to collect user ratings on various questions, comparing two different answers based on three criteria: Knowledge, Correctness, and Empathy.",
-  "main": "src/backend/api.js",
+  "description": "Survey app to collect user ratings...",
+  "main": "src/backend/server.js",
   "scripts": {
-    "start": "node src/backend/api.js",
-    "start-frontend": "react-scripts start",
-    "start-backend": "node src/backend/api.js"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "start-backend": "node src/backend/server.js",
+    "heroku-postbuild": "npm run build"
   },
+  "proxy": "http://localhost:5500",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.17.1",
+    "pg": "^8.12.0",
+    "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "express": "^4.17.1",
-    "pg": "^8.6.0"
+    "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
-    "react-scripts": "^4.0.3"
+    "react-scripts": "^5.0.1"
   },
-  "author": "",
-  "license": "ISC"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

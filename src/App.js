@@ -4,7 +4,7 @@ import UserContext from './components/UserContext';
 import LandingPage from './components/LandingPage';
 import QuestionPage from './components/QuestionPage';
 import ProgressPage from './components/ProgressPage';
-import './App.css'; // Import the stylesheet
+import './App.css';
 
 function App() {
   const [userData, setUserData] = useState({});

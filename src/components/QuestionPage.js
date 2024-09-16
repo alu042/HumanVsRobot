@@ -1,44 +1,68 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import UserContext from './UserContext';
 import RatingInterface from './RatingInterface';
 import { useNavigate } from 'react-router-dom';
 
-const questions = [
-  {
-    questionText: 'What is the capital of France?',
-    answers: ['Paris is the capital of France.', 'I believe the capital of France is Paris.'],
-  },
-  {
-    questionText: 'Who wrote "Hamlet"?',
-    answers: ['"Hamlet" was written by William Shakespeare.', 'The author of "Hamlet" is Shakespeare.'],
-  },
-  // Add more questions as needed
-];
-
 const QuestionPage = () => {
+  const [allQuestions, setAllQuestions] = useState([]);
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState([]);
-  const [skippedQuestions, setSkippedQuestions] = useState([]);
   const { userData } = useContext(UserContext);
   const navigate = useNavigate();
 
+  const criteriaTranslations = {
+    'Knowledge': 'Kunnskap',
+    'Helpfulness': 'Hjelpsomhet',
+    'Empathy': 'Empati'
+  };
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch('/api/questions');
+        const data = await response.json();
+        setAllQuestions(data);
+        selectRandomQuestions(data);
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+    fetchQuestions();
+  }, []);
+
+  const selectRandomQuestions = (questions) => {
+    const shuffled = [...questions].sort(() => 0.5 - Math.random());
+    setSelectedQuestions(shuffled.slice(0, 10));
+  };
+
   const handleRatingChange = (answerIndex, criterion, value) => {
-    const questionId = questions[currentQuestionIndex].questionText;
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
-      if (!newResponses[currentQuestionIndex]) {
-        newResponses[currentQuestionIndex] = {
-          questionId,
-          ratings: Array(questions[currentQuestionIndex].answers.length).fill(null),
+      const questionResponse = newResponses[currentQuestionIndex] || { 
+        questionId: selectedQuestions[currentQuestionIndex].question_id, 
+        ratings: []
+      };
+      
+      // Get the answerId
+      const answerId = selectedQuestions[currentQuestionIndex].answers[answerIndex].answer_id;
+      
+      // Find existing rating or create new one
+      let answerRating = questionResponse.ratings.find(r => r.answerId === answerId);
+      if (!answerRating) {
+        answerRating = { 
+          answerId, 
+          criteria: {}, 
+          comments: '' 
         };
+        questionResponse.ratings.push(answerRating);
       }
-      if (!newResponses[currentQuestionIndex].ratings[answerIndex]) {
-        newResponses[currentQuestionIndex].ratings[answerIndex] = {
-          answer: questions[currentQuestionIndex].answers[answerIndex],
-          criteria: {},
-        };
-      }
-      newResponses[currentQuestionIndex].ratings[answerIndex].criteria[criterion] = value;
+      
+      // Update the criteria
+      answerRating.criteria[criterion] = value;
+      
+      // Update the questionResponse and responses
+      newResponses[currentQuestionIndex] = questionResponse;
       return newResponses;
     });
   };
@@ -46,97 +70,129 @@ const QuestionPage = () => {
   const handleCommentsChange = (answerIndex, comments) => {
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
-      if (!newResponses[currentQuestionIndex]) {
-        newResponses[currentQuestionIndex] = {
-          questionId: questions[currentQuestionIndex].questionText,
-          ratings: Array(questions[currentQuestionIndex].answers.length).fill(null),
+      const questionResponse = newResponses[currentQuestionIndex] || { 
+        questionId: selectedQuestions[currentQuestionIndex].question_id, 
+        ratings: []
+      };
+      
+      // Get the answerId
+      const answerId = selectedQuestions[currentQuestionIndex].answers[answerIndex].answer_id;
+      
+      // Find existing rating or create new one
+      let answerRating = questionResponse.ratings.find(r => r.answerId === answerId);
+      if (!answerRating) {
+        answerRating = { 
+          answerId, 
+          criteria: {}, 
+          comments: '' 
         };
+        questionResponse.ratings.push(answerRating);
       }
-      if (!newResponses[currentQuestionIndex].ratings[answerIndex]) {
-        newResponses[currentQuestionIndex].ratings[answerIndex] = {
-          answer: questions[currentQuestionIndex].answers[answerIndex],
-          criteria: {},
-        };
-      }
-      newResponses[currentQuestionIndex].ratings[answerIndex].comments = comments;
+      
+      // Update the comments
+      answerRating.comments = comments;
+      
+      // Update the questionResponse and responses
+      newResponses[currentQuestionIndex] = questionResponse;
       return newResponses;
     });
   };
 
-  const isQuestionAnswered = () => {
-    const response = responses[currentQuestionIndex];
-    if (!response) return false;
-    // Check if all answers have been rated for all criteria
-    return response.ratings.every((rating) => {
-      if (!rating) return false;
-      const criteriaRated = Object.keys(rating.criteria).length;
-      return criteriaRated === 3; // Assuming 3 criteria: Knowledge, Correctness, Empathy
-    });
+  const isCurrentQuestionFullyRated = () => {
+    const currentResponse = responses[currentQuestionIndex];
+    if (!currentResponse) return false;
+    
+    // Ensure ratings array doesn't contain undefined or null values
+    const allRatingsAreValid = currentResponse.ratings.every(rating => rating && rating.criteria);
+    
+    if (!allRatingsAreValid) return false;
+    
+    const allCriteriaRated = currentResponse.ratings.every(rating => 
+      Object.keys(rating.criteria).length === Object.keys(criteriaTranslations).length
+    );
+    
+    return currentResponse.ratings.length === selectedQuestions[currentQuestionIndex].answers.length && allCriteriaRated;
   };
 
   const nextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-    } else {
-      finishSurvey();
-    }
+    setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
   };
 
   const skipQuestion = () => {
-    setSkippedQuestions((prevSkips) => [...prevSkips, currentQuestionIndex]);
-    nextQuestion();
-  };
+    setResponses((prevResponses) => {
+      const newResponses = [...prevResponses];
+      newResponses[currentQuestionIndex] = null;
+      return newResponses;
+    });
 
-  const finishSurvey = () => {
-    // Ensure all questions are either answered or skipped
-    const totalQuestions = questions.length;
-    const answeredOrSkipped = responses.length + skippedQuestions.length;
-    if (answeredOrSkipped < totalQuestions) {
-      alert('Please complete or skip all questions before finishing the survey.');
+    // Check if this is the last question
+    if (currentQuestionIndex === selectedQuestions.length - 1) {
+      finishSurvey();
     } else {
-      console.log('Survey Complete');
-      console.log('User Data:', userData);
-      console.log('Responses:', responses);
-      // Navigate to a summary or progress page if needed
-      navigate('/progress', { state: { userData, responses } });
+      nextQuestion();
     }
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
+  const finishSurvey = async () => {
+    const filteredResponses = responses.filter(response => response !== null);
+    console.log('Survey Complete', JSON.stringify(filteredResponses, null, 2));
+    try {
+      await fetch('/api/ratings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: userData.userId,
+          responses: filteredResponses,
+        }),
+      });
+      navigate('/progress');
+    } catch (error) {
+      console.error('Error submitting survey:', error);
+    }
+  };
+
+  if (selectedQuestions.length === 0) {
+    return <div>Loading questions...</div>;
+  }
+
+  const currentQuestion = selectedQuestions[currentQuestionIndex];
 
   return (
     <div className="question-page">
-      <h1>Question {currentQuestionIndex + 1}</h1>
-      <p className="question-text">{currentQuestion.questionText}</p>
+      <h1>Spørsmål {currentQuestionIndex + 1} av 10</h1>
+      <p className="question-text">{currentQuestion.question_text}</p>
       <div className="answers-container">
         {currentQuestion.answers.map((answer, idx) => (
           <RatingInterface
-            key={idx}
-            answer={answer}
-            criteria={['Knowledge', 'Correctness', 'Empathy']}
+            key={`${currentQuestionIndex}-${answer.answer_id}`}
+            answer={answer.answer_text}
+            answerId={answer.answer_id}
+            criteria={Object.keys(criteriaTranslations)}
+            criteriaTranslations={criteriaTranslations}
             onRatingChange={(criterion, value) => handleRatingChange(idx, criterion, value)}
             onCommentsChange={(comments) => handleCommentsChange(idx, comments)}
           />
         ))}
       </div>
       <div className="navigation-buttons">
-        {currentQuestionIndex < questions.length && (
-          <button onClick={skipQuestion}>Skip Question</button>
-        )}
-        {currentQuestionIndex < questions.length - 1 && (
-          <button
-            onClick={nextQuestion}
-            disabled={!isQuestionAnswered()}
+        <button className="skip-button" onClick={skipQuestion}>
+          {currentQuestionIndex === selectedQuestions.length - 1 ? 'Fullfør undersøkelsen' : 'Hopp over spørsmål'}
+        </button>
+        {currentQuestionIndex < selectedQuestions.length - 1 ? (
+          <button 
+            className="next-button" 
+            onClick={nextQuestion} 
+            disabled={!isCurrentQuestionFullyRated()}
           >
-            Next Question
+            Neste spørsmål
           </button>
-        )}
-        {currentQuestionIndex === questions.length - 1 && (
-          <button
-            onClick={finishSurvey}
-            disabled={!isQuestionAnswered() && skippedQuestions.length + responses.length < questions.length}
+        ) : (
+          <button 
+            className="finish-button" 
+            onClick={finishSurvey} 
+            disabled={!isCurrentQuestionFullyRated()}
           >
-            Finish Survey
+            Fullfør undersøkelsen
           </button>
         )}
       </div>
