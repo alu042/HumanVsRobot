@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onRatingChange, onCommentsChange }) => {
+const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onRatingChange }) => {
   const [ratings, setRatings] = useState({});
-  const [comments, setComments] = useState('');
 
   const likertOptions = [
     { value: 1, label: 'Veldig dårlig' },
@@ -19,12 +18,6 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
       [criterion]: value,
     }));
     onRatingChange(criterion, value);
-  };
-
-  const handleCommentsChange = (event) => {
-    const value = event.target.value;
-    setComments(value);
-    onCommentsChange(value);
   };
 
   return (
@@ -49,14 +42,6 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
           </div>
         </div>
       ))}
-      <div className="comments-section">
-        <label htmlFor={`comments-${answerId}`}>Andre tilbakemeldinger:</label>
-        <textarea
-          id={`comments-${answerId}`}
-          value={comments}
-          onChange={handleCommentsChange}
-        />
-      </div>
     </div>
   );
 };
@@ -67,7 +52,6 @@ RatingInterface.propTypes = {
   criteria: PropTypes.arrayOf(PropTypes.string).isRequired,
   criteriaTranslations: PropTypes.object.isRequired,
   onRatingChange: PropTypes.func.isRequired,
-  onCommentsChange: PropTypes.func.isRequired,
 };
 
 export default RatingInterface;

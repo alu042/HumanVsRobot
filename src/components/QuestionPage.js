@@ -44,23 +44,11 @@ const QuestionPage = () => {
           ...(newResponses[currentAnswerIndex]?.criteria || {}),
           [criterion]: value,
         },
-        comments: newResponses[currentAnswerIndex]?.comments || '',
       };
       return newResponses;
     });
   };
 
-  const handleCommentsChange = (comments) => {
-    setResponses((prevResponses) => {
-      const newResponses = [...prevResponses];
-      newResponses[currentAnswerIndex] = {
-        answerId: currentAnswer.answer_id,
-        criteria: newResponses[currentAnswerIndex]?.criteria || {},
-        comments,
-      };
-      return newResponses;
-    });
-  };
 
   const isCurrentAnswerFullyRated = () => {
     const currentResponse = responses[currentAnswerIndex];
@@ -111,7 +99,6 @@ const QuestionPage = () => {
           criteria={Object.keys(criteriaTranslations)}
           criteriaTranslations={criteriaTranslations}
           onRatingChange={handleRatingChange}
-          onCommentsChange={handleCommentsChange}
         />
       </div>
       <div className="navigation-buttons">

@@ -185,3 +185,41 @@ h1, h2 {
   padding: 20px;
 }
 
+.progress-page .feedback-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-page textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.progress-page button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.progress-page button:hover {
+  background-color: #0056b3;
+}
+
+.progress-page button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.progress-page .submit-message {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
