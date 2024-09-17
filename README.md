@@ -80,9 +80,3 @@ The purpose of this survey app is to collect user ratings on various answers, ev
 - Backend: Node.js, Express
 - Database: PostgreSQL
 - Additional libraries: bcrypt, cors, csv-parser, csv-writer, dotenv
-
-### Deployment
-The app is configured for deployment on Heroku. Use the following command to build the app for production:
-```bash
-npm run build
-```
