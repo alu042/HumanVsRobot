@@ -32,7 +32,8 @@ const LandingPage = () => {
 
   return (
     <div className="landing-page">
-      <h1>Velkommen til undersøkelsen</h1>
+      <h1>Velkommen til DiaGuideLLM!</h1>
+      <p>En undersøkelse av kunstig intelligens brukt til helseveiledning til personer med diabetes.</p>
       
       <div className="landing-content">
         <section className="survey-info">
@@ -44,7 +45,10 @@ const LandingPage = () => {
             <li><strong>Hjelpsomhet:</strong> Evaluer i hvilken grad svaret gir nyttige og praktiske råd eller støtte som kan hjelpe personen som spør.</li>
             <li><strong>Empati:</strong> Bedøm svarets evne til å vise forståelse for pasientens følelser og bekymringer.</li>
           </ul>
-          <p>Undersøkelsen tar omtrent 10-15 minutter å fullføre. Dine svar er anonyme og vil bli brukt til forskningsformål.</p>
+          <p>Undersøkelsen tar omtrent 10-15 minutter å fullføre. Dine svar er anonyme og vil bli brukt til forskningsformål. Ved å 
+            gjennomføre undersøkelsen samtykker du til at vi lagrer og bruker dine svar til forskningsformål.
+          </p>
+          <p>Kontakt oss på <a href="mailto:dia.guide.llm@gmail.com">dia.guide.llm@gmail.com</a> for spørsmål om undersøkelsen.</p>
         </section>
 
         <section className="user-questions">
