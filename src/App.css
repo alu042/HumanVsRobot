@@ -85,7 +85,7 @@ p, ul {
   background-color: var(--white);
   border: none;
   border-radius: 8px;
-  padding: 25px;
+  padding: 0px 15px 15px 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
