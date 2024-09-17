@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
+import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -17,16 +18,23 @@ const LandingPage = () => {
     }
 
     try {
-      const response = await fetch('/api/users', {
+      const response = await fetch('/api/start-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ageGroup, gender, healthcareProfessionalType, previousParticipation }),
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
       const data = await response.json();
-      setUserData({ userId: data.userId });
+      setUserData({ userId: data.userId, sessionId: data.sessionId });
       navigate('/question');
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error starting session:', error);
+      alert('Det oppstod en feil ved start av undersøkelsen. Vennligst prøv igjen senere.');
     }
   };
 
@@ -113,6 +121,8 @@ const LandingPage = () => {
       </div>
 
       <button className="start-button" onClick={handleStart}>Start undersøkelsen</button>
+      <br />
+      <Link to="/dashboard">View Dashboard</Link>
     </div>
   );
 };

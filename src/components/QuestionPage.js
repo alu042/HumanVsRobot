@@ -35,22 +35,34 @@ const QuestionPage = () => {
 
   const currentAnswer = selectedAnswers[currentAnswerIndex];
 
-  const handleRatingChange = (criterion, value) => {
+  const handleRatingChange = (answerId, criterion, value, responseTime) => {
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
-      newResponses[currentAnswerIndex] = {
-        answerId: currentAnswer.answer_id,
-        criteria: {
-          ...(newResponses[currentAnswerIndex]?.criteria || {}),
-          [criterion]: value,
-        },
-      };
+      const existingResponseIndex = newResponses.findIndex(r => r.answerId === answerId);
+      
+      if (existingResponseIndex !== -1) {
+        newResponses[existingResponseIndex] = {
+          ...newResponses[existingResponseIndex],
+          criteria: {
+            ...newResponses[existingResponseIndex].criteria,
+            [criterion]: value,
+          },
+          responseTime: responseTime,
+        };
+      } else {
+        newResponses.push({
+          answerId: answerId,
+          criteria: { [criterion]: value },
+          responseTime: responseTime,
+        });
+      }
+      
       return newResponses;
     });
   };
 
   const isCurrentAnswerFullyRated = () => {
-    const currentResponse = responses[currentAnswerIndex];
+    const currentResponse = responses.find(r => r.answerId === currentAnswer.answer_id);
     if (!currentResponse) return false;
 
     const allCriteriaRated =
@@ -74,7 +86,7 @@ const QuestionPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: userData.userId,
+          sessionId: userData.sessionId,
           responses,
         }),
       });
