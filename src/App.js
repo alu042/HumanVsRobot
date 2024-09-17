@@ -4,6 +4,7 @@ import UserContext from './components/UserContext';
 import LandingPage from './components/LandingPage';
 import QuestionPage from './components/QuestionPage';
 import ProgressPage from './components/ProgressPage';
+import Dashboard from './components/Dashboard';
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/question" element={<QuestionPage />} />
           <Route path="/progress" element={<ProgressPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </UserContext.Provider>

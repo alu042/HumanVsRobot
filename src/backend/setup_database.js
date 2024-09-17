@@ -29,20 +29,39 @@ CREATE TABLE IF NOT EXISTS users (
   demographic_data TEXT
 );
 
-CREATE TABLE IF NOT EXISTS user_feedback (
+CREATE TABLE IF NOT EXISTS sessions (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
-  feedback TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  end_time TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS ratings (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
+  session_id INTEGER REFERENCES sessions(id),
   answer_id INTEGER REFERENCES answers(id),
   knowledge INTEGER,
   helpfulness INTEGER,
-  empathy INTEGER
+  empathy INTEGER,
+  response_time INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS user_feedback (
+  id SERIAL PRIMARY KEY,
+  session_id INTEGER REFERENCES sessions(id),
+  feedback TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS dashboard_stats (
+  id SERIAL PRIMARY KEY,
+  total_responses INTEGER DEFAULT 0,
+  avg_response_time FLOAT DEFAULT 0,
+  avg_knowledge FLOAT DEFAULT 0,
+  avg_helpfulness FLOAT DEFAULT 0,
+  avg_empathy FLOAT DEFAULT 0,
+  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `;
 
@@ -110,11 +129,13 @@ async function setupDatabase() {
             [questionId, answer_human, 'human']
           );
 
-          // Insert LLM answer
-          await dbClient.query(
-            'INSERT INTO answers (question_id, answer_text, source) VALUES ($1, $2, $3)',
-            [questionId, answer_llm, 'llm']
-          );
+          // Insert LLM answer if it's not 'N/A'
+          if (answer_llm && answer_llm !== 'N/A') {
+            await dbClient.query(
+              'INSERT INTO answers (question_id, answer_text, source) VALUES ($1, $2, $3)',
+              [questionId, answer_llm, 'llm']
+            );
+          }
         }
         console.log('Data imported successfully.');
         await dbClient.end();

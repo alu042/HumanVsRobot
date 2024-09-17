@@ -1,9 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 
 const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onRatingChange }) => {
   const [ratings, setRatings] = useState({});
+  const [startTime] = useState(Date.now());
+
+  useEffect(() => {
+    // Reset ratings and startTime when the answer changes
+    setRatings({});
+  }, [answerId]);
 
   const likertOptions = [
     { value: 1, label: 'Veldig dårlig' },
@@ -14,11 +20,12 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
   ];
 
   const handleRatingChange = (criterion, value) => {
+    const responseTime = Date.now() - startTime;
     setRatings((prevRatings) => ({
       ...prevRatings,
       [criterion]: value,
     }));
-    onRatingChange(criterion, value);
+    onRatingChange(answerId, criterion, value, responseTime);
   };
 
   return (

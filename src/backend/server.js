@@ -1,10 +1,13 @@
 const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
 const path = require('path');
 const cors = require('cors');
-const apiRouter = require('./api');
+const { router, wss } = require('./api');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 
@@ -12,7 +15,27 @@ app.use(cors());
 app.use(express.json());
 
 // Use API routes
-app.use('/api', apiRouter);
+app.use('/api', router);
+
+// WebSocket connection handling
+server.on('upgrade', (request, socket, head) => {
+  // Only handle upgrades for the WebSocket path
+  if (request.url === '/ws') {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
+  }
+});
+
+wss.on('connection', (ws) => {
+  console.log('New WebSocket connection');
+
+  ws.on('close', () => {
+    console.log('WebSocket connection closed');
+  });
+});
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '../../build')));
@@ -23,6 +46,6 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5500;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

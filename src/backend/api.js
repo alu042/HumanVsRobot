@@ -1,20 +1,40 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('./database');
-const { insertUser, insertRating, insertUserFeedback } = require('./models');
+const WebSocket = require('ws');
+const { insertUser, insertSession, insertRating, insertUserFeedback, updateDashboardStats, endSession, getDashboardStats } = require('./models');
 
 // Middleware to parse JSON bodies
 router.use(express.json());
 
-// User creation route
-router.post('/users', async (req, res) => {
+// WebSocket server
+const wss = new WebSocket.Server({ noServer: true, path: '/ws' });
+
+// Broadcast dashboard stats to all connected clients
+function broadcastDashboardStats(stats) {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(stats));
+    }
+  });
+}
+
+// User creation and session start route
+router.post('/start-session', async (req, res) => {
   const { ageGroup, gender, healthcareProfessionalType, previousParticipation } = req.body;
+  const client = await pool.connect();
   try {
-    const user = await insertUser(ageGroup, gender, healthcareProfessionalType, previousParticipation, null);
-    res.json({ userId: user.user_id });
+    await client.query('BEGIN');
+    const user = await insertUser(client, ageGroup, gender, healthcareProfessionalType, previousParticipation, null);
+    const session = await insertSession(client, user.id);
+    await client.query('COMMIT');
+    res.json({ userId: user.id, sessionId: session.id });
   } catch (error) {
-    console.error('Error creating user:', error);
+    await client.query('ROLLBACK');
+    console.error('Error starting session:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
   }
 });
 
@@ -73,24 +93,29 @@ router.get('/answers', async (req, res) => {
   }
 });
 
-// Store user ratings and comments
+// Store user ratings
 router.post('/ratings', async (req, res) => {
-  const { userId, responses } = req.body;
+  const { sessionId, responses } = req.body;
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    let latestStats;
     for (const response of responses) {
-      const { answerId, criteria } = response;
-      await insertRating(
-        userId,
+      const { answerId, criteria, responseTime } = response;
+      const rating = await insertRating(
+        client,
+        sessionId,
         answerId,
         criteria.Knowledge,
         criteria.Helpfulness,
-        criteria.Empathy
+        criteria.Empathy,
+        responseTime
       );
+      latestStats = await updateDashboardStats(client, rating);
     }
     await client.query('COMMIT');
-    res.json({ message: 'Ratings saved successfully' });
+    broadcastDashboardStats(latestStats);
+    res.json({ message: 'Ratings saved successfully', dashboardStats: latestStats });
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error storing ratings:', error);
@@ -102,14 +127,52 @@ router.post('/ratings', async (req, res) => {
 
 // User feedback route
 router.post('/feedback', async (req, res) => {
-  const { userId, feedback } = req.body;
+  const { sessionId, feedback } = req.body;
+  const client = await pool.connect();
   try {
-    await insertUserFeedback(userId, feedback);
+    await client.query('BEGIN');
+    await insertUserFeedback(client, sessionId, feedback);
+    await client.query('COMMIT');
     res.json({ message: 'Feedback submitted successfully' });
   } catch (error) {
+    await client.query('ROLLBACK');
     console.error('Error submitting feedback:', error);
     res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
   }
 });
 
-module.exports = router;
+// Get dashboard stats
+router.get('/dashboard-stats', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const stats = await getDashboardStats(client);
+    res.json(stats); // Ensure valid JSON is returned
+  } catch (error) {
+    console.error('Error fetching dashboard stats:', error);
+    res.status(500).json({ error: 'Internal server error' }); // Return JSON error message
+  } finally {
+    client.release();
+  }
+});
+
+// End session route
+router.post('/end-session', async (req, res) => {
+  const { sessionId } = req.body;
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    await endSession(client, sessionId);
+    await client.query('COMMIT');
+    res.json({ message: 'Session ended successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error ending session:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+module.exports = { router, wss };
