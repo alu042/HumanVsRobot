@@ -46,6 +46,14 @@ router.get('/questions', async (req, res) => {
 router.get('/answers', async (req, res) => {
   try {
     const result = await pool.query(`
+      WITH answer_ratings AS (
+        SELECT 
+          a.id AS answer_id,
+          COUNT(r.id) AS rating_count
+        FROM answers a
+        LEFT JOIN ratings r ON a.id = r.answer_id
+        GROUP BY a.id
+      )
       SELECT 
         a.id AS answer_id,
         a.answer_text,
@@ -54,7 +62,8 @@ router.get('/answers', async (req, res) => {
         a.source
       FROM answers a
       JOIN questions q ON a.question_id = q.id
-      ORDER BY RANDOM()
+      JOIN answer_ratings ar ON a.id = ar.answer_id
+      ORDER BY RANDOM() * (1.0 / (ar.rating_count + 1)) -- Weight by the number of ratings
       LIMIT 10
     `);
     res.json(result.rows);
