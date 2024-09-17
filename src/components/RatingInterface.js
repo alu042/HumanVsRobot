@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
 
 const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onRatingChange }) => {
   const [ratings, setRatings] = useState({});
@@ -22,7 +23,9 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
 
   return (
     <div className="rating-interface">
-      <p className="answer-text">{answer}</p>
+      <div className="answer-text">
+        <ReactMarkdown>{answer}</ReactMarkdown>
+      </div>
       {criteria.map((criterion) => (
         <div key={criterion} className="criterion">
           <p className="criterion-label"><strong>{criteriaTranslations[criterion] || criterion}</strong>:</p>
