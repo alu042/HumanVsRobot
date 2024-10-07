@@ -177,13 +177,16 @@ select, input[type="radio"] {
 .rating-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 3px;
+  width: 80%;
 }
 
 .rating-option {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 2px;
+  flex: 1 0 calc(20% - 10px);
+  min-width: 100px;
 }
 
 .navigation-buttons {
@@ -254,23 +257,21 @@ select, input[type="radio"] {
 
   .rating-options {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .rating-option {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+    flex: 1 0 auto;
     width: 100%;
+    margin-bottom: 5px;
   }
 
-  .rating-option input[type="radio"] {
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
 
   .option-label {
-    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9em;
   }
 
   .navigation-buttons {
