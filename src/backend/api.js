@@ -21,11 +21,20 @@ function broadcastDashboardStats(stats) {
 
 // User creation and session start route
 router.post('/start-session', async (req, res) => {
-  const { ageGroup, gender, healthcareProfessionalType, previousParticipation } = req.body;
+  const { ageGroup, gender, isHealthcarePersonnel, healthcareProfessionalType, hasDiabetes, educationLevel, previousParticipation } = req.body;
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const user = await insertUser(client, ageGroup, gender, healthcareProfessionalType, previousParticipation, null);
+    const user = await insertUser(
+      client, 
+      ageGroup, 
+      gender, 
+      hasDiabetes,
+      isHealthcarePersonnel,
+      healthcareProfessionalType, 
+      educationLevel,
+      previousParticipation
+    );
     const session = await insertSession(client, user.id);
     await client.query('COMMIT');
     res.json({ userId: user.id, sessionId: session.id });
