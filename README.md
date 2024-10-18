@@ -22,9 +22,12 @@ The purpose of this survey app is to collect user ratings on various answers, ev
 
 #### Progression & Submission
 - After rating an answer, move users to the next one automatically
-- Clearly indicate progress (e.g., "Question 2 of 5")
+- Clearly indicate progress (e.g., "Question 2 of 10")
 - Once all answers are rated, present a submission button
 - Include a "Thank You" page upon submission with an option for additional feedback
+
+#### Dashboard
+- Real-time display of survey statistics
 
 ### Backend & Database
 
@@ -39,6 +42,7 @@ The purpose of this survey app is to collect user ratings on various answers, ev
 - Fetching questions and answers
 - Storing user ratings
 - Submitting user feedback
+- Real-time updates via WebSocket connection
 
 ### Usage Instructions
 1. Clone the repository
@@ -53,16 +57,28 @@ The purpose of this survey app is to collect user ratings on various answers, ev
 3. Update the database connection details in `src/backend/database.js` with your database credentials.
 4. Run the following command to create the necessary tables:
    ```bash
-   node src/backend/models.js
+   node src/backend/setup_database.js
    ```
 5. Start the backend server using `npm run start-backend`.
 
+### Environment Variables
+1. Create a `.env` file in the root directory of the project.
+2. Add the following variables to the `.env` file, replacing the values with your actual database credentials:
+   ```
+   DB_USER=your_username
+   DB_HOST=localhost
+   DB_NAME=humanvsrobot
+   DB_PASSWORD=your_password
+   DB_PORT=5432
+   ```
+3. Make sure to keep the `.env` file secure and do not commit it to version control.
+
 ### Importing Questions and Answers from CSV
-1. Prepare a CSV file with the following headers: "question", "answer1", "answer2".
-2. Place the CSV file in the root directory of the project.
+1. Prepare a CSV file with the following headers: "question", "answer_human", "answer_llm".
+2. Place the CSV file in the `src/backend` directory and name it `data.csv`.
 3. Run the following command to import the questions and answers from the CSV file:
    ```bash
-   node src/backend/models.js import <path_to_csv_file>
+   node src/backend/import_data.js
    ```
 4. The questions and answers will be imported into the database.
 
@@ -75,8 +91,13 @@ The purpose of this survey app is to collect user ratings on various answers, ev
 3. The exported data will be saved as a CSV file in the `exports` directory with a timestamp in the filename.
 4. The exported CSV file will contain user ratings and feedback.
 
+### Dashboard Access
+1. To view the real-time dashboard, navigate to `/dashboard` in your browser.
+2. The dashboard displays statistics such as total responses, average response time, and average ratings for knowledge, helpfulness, and empathy.
+3. The dashboard updates in real-time using WebSocket connections.
+
 ### Technologies Used
-- Frontend: React, React Router
-- Backend: Node.js, Express
+- Frontend: React, React Router, React Markdown
+- Backend: Node.js, Express, WebSocket
 - Database: PostgreSQL
-- Additional libraries: bcrypt, cors, csv-parser, csv-writer, dotenv
+- Additional libraries: bcrypt, cors, csv-parser, csv-writer, dotenv, pg
