@@ -22,11 +22,13 @@ CREATE TABLE IF NOT EXISTS answers (
 
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
-  age_group VARCHAR(10),
-  gender VARCHAR(20),
+  age_group VARCHAR(10) CHECK (age_group IN ('0-19', '20-29', '30-39', '40-49', '50-59', '60+')),
+  gender VARCHAR(20) CHECK (gender IN ('male', 'female', 'other', 'prefer_not_to_say')),
+  has_diabetes VARCHAR(20) CHECK (has_diabetes IN ('yes', 'no', 'prefer_not_to_say')),
+  is_healthcare_personnel BOOLEAN,
   healthcare_professional_type VARCHAR(50),
-  previous_participation BOOLEAN,
-  demographic_data TEXT
+  education_level VARCHAR(50),
+  previous_participation BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
