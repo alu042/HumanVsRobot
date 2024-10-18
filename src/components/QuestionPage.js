@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
 import RatingInterface from './RatingInterface';
+import ReactMarkdown from 'react-markdown';
 
 const QuestionPage = () => {
   const { userData } = useContext(UserContext);
@@ -104,7 +105,9 @@ const QuestionPage = () => {
         </h1>
       </header>
       <main className="question-content">
-        <p className="question-text">{currentAnswer.question_text}</p>
+        <div className="question-text">
+          <ReactMarkdown>{currentAnswer.question_text}</ReactMarkdown>
+        </div>
         <div className="answer-container">
           <RatingInterface
             key={currentAnswer.answer_id}
