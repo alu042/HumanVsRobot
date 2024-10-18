@@ -1,11 +1,11 @@
 const pool = require('./database');
 
 // Insert a new user
-const insertUser = async (client, ageGroup, gender, healthcareProfessionalType, previousParticipation, demographicData) => {
+const insertUser = async (client, ageGroup, gender, hasDiabetes, isHealthcarePersonnel, healthcareProfessionalType, educationLevel, previousParticipation) => {
   try {
     const result = await client.query(
-      'INSERT INTO users (age_group, gender, healthcare_professional_type, previous_participation, demographic_data) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-      [ageGroup, gender, healthcareProfessionalType, previousParticipation, demographicData]
+      'INSERT INTO users (age_group, gender, has_diabetes, is_healthcare_personnel, healthcare_professional_type, education_level, previous_participation) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+      [ageGroup, gender, hasDiabetes, isHealthcarePersonnel === 'yes', healthcareProfessionalType || null, educationLevel, previousParticipation]
     );
     return result.rows[0];
   } catch (error) {
