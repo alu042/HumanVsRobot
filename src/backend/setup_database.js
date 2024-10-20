@@ -1,11 +1,16 @@
 const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+require('dotenv').config();
 const { Client } = require('pg');
 const fs = require('fs');
 const csv = require('csv-parser');
 
 const dbUrl = process.env.DATABASE_URL;
 const csvFilePath = path.join(__dirname, 'data.csv');
+
+if (!dbUrl) {
+  console.error('DATABASE_URL is not set. Please check your Heroku config vars.');
+  process.exit(1);
+}
 
 const createTablesSQL = `
 CREATE TABLE IF NOT EXISTS questions (
@@ -68,6 +73,8 @@ CREATE TABLE IF NOT EXISTS dashboard_stats (
 `;
 
 async function setupDatabase() {
+  console.log('Attempting to connect to database with URL:', dbUrl);
+  
   const client = new Client({
     connectionString: dbUrl,
     ssl: {
@@ -87,6 +94,12 @@ async function setupDatabase() {
     const existingData = await client.query('SELECT COUNT(*) FROM questions');
     if (parseInt(existingData.rows[0].count) > 0) {
       console.log('Data already exists in the database. Skipping import.');
+      return;
+    }
+
+    // Check if CSV file exists
+    if (!fs.existsSync(csvFilePath)) {
+      console.error(`CSV file not found: ${csvFilePath}`);
       return;
     }
 

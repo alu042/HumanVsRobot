@@ -4,7 +4,8 @@ const WebSocket = require('ws');
 const path = require('path');
 const cors = require('cors');
 const { router, wss } = require('./api');
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+// require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
