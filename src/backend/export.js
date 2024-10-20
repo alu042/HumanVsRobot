@@ -1,15 +1,14 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { Pool } = require('pg');
 const { createObjectCsvWriter } = require('csv-writer');
 
-// Database connection configuration
 const pool = new Pool({
-  user: 'your_username',
-  host: 'localhost',
-  database: 'your_database_name',
-  password: 'your_password',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 async function exportSurveyData() {
