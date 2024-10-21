@@ -46,7 +46,7 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <h1>Velkommen til DiaGuideLLM!</h1>
-      <p>En undersøkelse av kunstig intelligens brukt til helseveiledning til personer med diabetes.</p>
+      <p>En undersøkelse av kunstig intelligens brukt i helseveiledning til personer med diabetes.</p>
       
       <div className="landing-content">
         <section className="survey-info">
