@@ -36,7 +36,7 @@ const QuestionPage = () => {
 
   const currentAnswer = selectedAnswers[currentAnswerIndex];
 
-  const handleRatingChange = (answerId, criterion, value, responseTime) => {
+  const handleRatingChange = (answerId, questionId, criterion, value, responseTime) => {
     setResponses((prevResponses) => {
       const newResponses = [...prevResponses];
       const existingResponseIndex = newResponses.findIndex(r => r.answerId === answerId);
@@ -53,6 +53,7 @@ const QuestionPage = () => {
       } else {
         newResponses.push({
           answerId: answerId,
+          questionId: questionId,
           criteria: { [criterion]: value },
           responseTime: responseTime,
         });
@@ -113,6 +114,7 @@ const QuestionPage = () => {
             key={currentAnswer.answer_id}
             answer={currentAnswer.answer_text}
             answerId={currentAnswer.answer_id}
+            questionId={currentAnswer.question_id}
             criteria={Object.keys(criteriaTranslations)}
             criteriaTranslations={criteriaTranslations}
             onRatingChange={handleRatingChange}
