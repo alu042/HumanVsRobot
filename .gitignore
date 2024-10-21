@@ -2,4 +2,5 @@ exports/
 src/.env
 node_modules/
 .env
+data.csv
 .DS_Store
