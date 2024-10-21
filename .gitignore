@@ -2,5 +2,4 @@ exports/
 src/.env
 node_modules/
 .env
-src/backend/data.csv
 .DS_Store
