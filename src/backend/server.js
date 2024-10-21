@@ -10,6 +10,15 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
+// HTTPS redirection middleware
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https' && process.env.NODE_ENV === 'production') {
+    res.redirect(`https://${req.header('host')}${req.url}`);
+  } else {
+    next();
+  }
+});
+
 app.use(cors());
 
 // Parse JSON bodies

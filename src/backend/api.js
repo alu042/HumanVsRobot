@@ -110,11 +110,12 @@ router.post('/ratings', async (req, res) => {
     await client.query('BEGIN');
     let latestStats;
     for (const response of responses) {
-      const { answerId, criteria, responseTime } = response;
+      const { answerId, questionId, criteria, responseTime } = response;
       const rating = await insertRating(
         client,
         sessionId,
         answerId,
+        questionId,
         criteria.Knowledge,
         criteria.Helpfulness,
         criteria.Empathy,
