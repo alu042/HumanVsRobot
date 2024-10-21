@@ -11,7 +11,7 @@ const RatingInterface = ({
   onRatingChange,
 }) => {
   const [ratings, setRatings] = useState({});
-  const [startTime] = useState(Date.now());
+  const [startTime, setStartTime] = useState(Date.now());
 
   useEffect(() => {
     setRatings({});
