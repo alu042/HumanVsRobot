@@ -29,12 +29,12 @@ const insertSession = async (client, userId) => {
 };
 
 // Insert a new rating
-const insertRating = async (client, sessionId, answerId, knowledge, helpfulness, empathy, responseTime) => {
+const insertRating = async (client, sessionId, answerId, questionId, knowledge, helpfulness, empathy, responseTime) => {
   try {
     const result = await client.query(
-      `INSERT INTO ratings (session_id, answer_id, knowledge, helpfulness, empathy, response_time)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [sessionId, answerId, knowledge, helpfulness, empathy, responseTime]
+      `INSERT INTO ratings (session_id, answer_id, question_id, knowledge, helpfulness, empathy, response_time)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [sessionId, answerId, questionId, knowledge, helpfulness, empathy, responseTime]
     );
     return result.rows[0];
   } catch (error) {
