@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS ratings (
   id SERIAL PRIMARY KEY,
   session_id INTEGER REFERENCES sessions(id),
   answer_id INTEGER REFERENCES answers(id),
+  question_id INTEGER REFERENCES questions(id),
   knowledge INTEGER,
   helpfulness INTEGER,
   empathy INTEGER,
