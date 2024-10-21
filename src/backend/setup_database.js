@@ -39,8 +39,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS sessions (
   id SERIAL PRIMARY KEY,
   user_id INTEGER REFERENCES users(id),
-  start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  end_time TIMESTAMP
+  start_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  end_time TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS ratings (
@@ -51,14 +51,14 @@ CREATE TABLE IF NOT EXISTS ratings (
   helpfulness INTEGER,
   empathy INTEGER,
   response_time INTEGER,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS user_feedback (
   id SERIAL PRIMARY KEY,
   session_id INTEGER REFERENCES sessions(id),
   feedback TEXT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS dashboard_stats (
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS dashboard_stats (
   avg_knowledge FLOAT DEFAULT 0,
   avg_helpfulness FLOAT DEFAULT 0,
   avg_empathy FLOAT DEFAULT 0,
-  last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  last_updated TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 `;
 
@@ -79,12 +79,17 @@ async function setupDatabase() {
     connectionString: dbUrl,
     ssl: {
       rejectUnauthorized: false
-    }
+    },
+    timezone: 'Europe/Berlin'
   });
 
   try {
     await client.connect();
     console.log('Connected to the database');
+
+    // Set the time zone for the database session
+    await client.query("SET timezone TO 'Europe/Berlin';");
+    console.log('Time zone set to Europe/Berlin');
 
     // Create tables
     await client.query(createTablesSQL);
