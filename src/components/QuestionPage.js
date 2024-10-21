@@ -67,9 +67,9 @@ const QuestionPage = () => {
     const currentResponse = responses.find(r => r.answerId === currentAnswer.answer_id);
     if (!currentResponse) return false;
 
-    const allCriteriaRated =
-      Object.keys(currentResponse.criteria).length ===
-      Object.keys(criteriaTranslations).length;
+    const allCriteriaRated = Object.keys(criteriaTranslations).every(criterion => 
+      currentResponse.criteria.hasOwnProperty(criterion) && currentResponse.criteria[criterion] !== undefined
+    );
 
     return allCriteriaRated;
   };

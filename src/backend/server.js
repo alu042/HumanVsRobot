@@ -19,7 +19,13 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: ['https://www.diaguide.org', 'https://diaguide.org'],
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Parse JSON bodies
 app.use(express.json());
