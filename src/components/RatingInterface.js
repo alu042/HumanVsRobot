@@ -2,13 +2,20 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 
-const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onRatingChange }) => {
+const RatingInterface = ({
+  answer,
+  answerId,
+  questionId,
+  criteria,
+  criteriaTranslations,
+  onRatingChange,
+}) => {
   const [ratings, setRatings] = useState({});
   const [startTime] = useState(Date.now());
 
   useEffect(() => {
-    // Reset ratings and startTime when the answer changes
     setRatings({});
+    setStartTime(Date.now()); // Reset startTime
   }, [answerId]);
 
   const likertOptions = [
@@ -25,7 +32,7 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
       ...prevRatings,
       [criterion]: value,
     }));
-    onRatingChange(answerId, criterion, value, responseTime);
+    onRatingChange(answerId, questionId, criterion, value, responseTime);
   };
 
   return (
@@ -59,6 +66,7 @@ const RatingInterface = ({ answer, answerId, criteria, criteriaTranslations, onR
 RatingInterface.propTypes = {
   answer: PropTypes.string.isRequired,
   answerId: PropTypes.number.isRequired,
+  questionId: PropTypes.number.isRequired, 
   criteria: PropTypes.arrayOf(PropTypes.string).isRequired,
   criteriaTranslations: PropTypes.object.isRequired,
   onRatingChange: PropTypes.func.isRequired,
