@@ -42,8 +42,8 @@ const RatingInterface = ({
       </div>
       {criteria.map((criterion) => (
         <div key={criterion} className="criterion">
-          <p className="criterion-label"><strong>{criteriaTranslations[criterion] || criterion}</strong>:</p>
-          <div className="rating-options">
+          <p className="criterion-label">{criteriaTranslations[criterion] || criterion}</p>
+          <div className="rating-options" role="radiogroup" aria-labelledby={`${criterion}-label`}>
             {likertOptions.map((option) => (
               <label key={option.value} className="rating-option">
                 <input
@@ -52,6 +52,7 @@ const RatingInterface = ({
                   value={option.value}
                   checked={ratings[criterion] === option.value}
                   onChange={() => handleRatingChange(criterion, option.value)}
+                  aria-label={`${option.label} for ${criteriaTranslations[criterion] || criterion}`}
                 />
                 <span className="option-label">{option.label}</span>
               </label>
