@@ -477,12 +477,12 @@ input[type="radio"] {
 /* Start Button Styles */
 .start-button {
   display: inline-block;
-  padding: 14px 28px;
+  padding: 10px 24px;
   background-color: var(--secondary-color);
   color: var(--white);
   border: none;
   border-radius: 8px;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
