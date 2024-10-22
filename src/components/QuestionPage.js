@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import UserContext from './UserContext';
 import RatingInterface from './RatingInterface';
@@ -10,6 +10,7 @@ const QuestionPage = () => {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [currentAnswerIndex, setCurrentAnswerIndex] = useState(0);
   const [responses, setResponses] = useState([]);
+  const pageRef = useRef(null);
 
   const criteriaTranslations = {
     Knowledge: 'Kunnskap',
@@ -77,6 +78,10 @@ const QuestionPage = () => {
   const nextAnswer = () => {
     if (currentAnswerIndex < selectedAnswers.length - 1) {
       setCurrentAnswerIndex((prevIndex) => prevIndex + 1);
+      // Scroll to the top of the page
+      if (pageRef.current) {
+        pageRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     } else {
       finishSurvey();
     }
@@ -99,7 +104,7 @@ const QuestionPage = () => {
   };
 
   return (
-    <div className="question-page">
+    <div className="question-page" ref={pageRef}>
       <header className="question-header">
         <h1 className="question-title">
           Spørsmål {currentAnswerIndex + 1} av {selectedAnswers.length}
