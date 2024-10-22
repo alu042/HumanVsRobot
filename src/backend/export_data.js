@@ -21,6 +21,10 @@ async function exportDataToCSV() {
     // Execute queries and write results to CSV
     for (const [tableName, query] of Object.entries(queries)) {
       const result = await client.query(query);
+      if (result.rows.length === 0) {
+        console.log(`No data found for ${tableName}. Skipping CSV export.`);
+        continue;
+      }
       const parser = new Parser();
       const csv = parser.parse(result.rows);
       
