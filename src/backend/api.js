@@ -190,7 +190,15 @@ router.get('/dashboard', async (req, res) => {
   try {
     const userCount = await getUserCount(client);
     const dashboardStats = await getDashboardStats(client);
-    res.json({ userCount, ...dashboardStats });
+    res.json({
+      userCount,
+      total_responses: dashboardStats.total_responses || 0,
+      avg_response_time: dashboardStats.avg_response_time || 0,
+      avg_knowledge: dashboardStats.avg_knowledge || 0,
+      avg_helpfulness: dashboardStats.avg_helpfulness || 0,
+      avg_empathy: dashboardStats.avg_empathy || 0,
+      last_updated: dashboardStats.last_updated || null
+    });
   } catch (error) {
     console.error('Error fetching dashboard data:', error);
     res.status(500).json({ error: 'Internal server error' });
