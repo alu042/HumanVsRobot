@@ -177,8 +177,7 @@ const LandingPage = () => {
       </div>
 
       <button className="start-button" onClick={handleStart}>Start undersøkelsen</button>
-      <br />
-      <Link to="/dashboard">View Dashboard</Link>
+    
     </div>
   );
 };
