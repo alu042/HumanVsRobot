@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('./database');
 const WebSocket = require('ws');
-const { insertUser, insertSession, insertRating, insertUserFeedback, updateDashboardStats, endSession, getDashboardStats } = require('./models');
+const { insertUser, insertSession, insertRating, insertUserFeedback, updateDashboardStats, endSession, getDashboardStats, getUserCount } = require('./models');
 
 // Middleware to parse JSON bodies
 router.use(express.json());
@@ -179,6 +179,20 @@ router.post('/end-session', async (req, res) => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error ending session:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    client.release();
+  }
+});
+
+router.get('/dashboard', async (req, res) => {
+  const client = await pool.connect();
+  try {
+    const userCount = await getUserCount(client);
+    const dashboardStats = await getDashboardStats(client);
+    res.json({ userCount, ...dashboardStats });
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
     res.status(500).json({ error: 'Internal server error' });
   } finally {
     client.release();
