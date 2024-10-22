@@ -1,75 +1,74 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
-function Dashboard() {
-  const [stats, setStats] = useState(null);
-  const [wsConnected, setWsConnected] = useState(false);
+const Dashboard = ({ setIsAuthenticated }) => {
+  const [dashboardData, setDashboardData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDashboardStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const response = await fetch('/api/dashboard-stats');
+        const response = await fetch('/api/dashboard');
         if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`Failed to fetch: ${response.status} ${response.statusText} - ${text}`);
+          throw new Error('Failed to fetch dashboard data');
         }
         const data = await response.json();
-        setStats(data);
-      } catch (error) {
-        console.error('Error fetching dashboard stats:', error);
+        setDashboardData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data. Please try again later.');
+        setLoading(false);
       }
     };
 
-    fetchDashboardStats();
-
-    // Set up WebSocket connection
-    const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const ws = new WebSocket(`${wsProtocol}://${window.location.host}/ws`);
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
-      setWsConnected(true);
-    };
-
-    ws.onmessage = (event) => {
-      const newStats = JSON.parse(event.data);
-      setStats(newStats);
-    };
-
-    ws.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-      setWsConnected(false);
-    };
-
-    // Clean up WebSocket connection on component unmount
-    return () => {
-      ws.close();
-    };
+    fetchDashboardData();
   }, []);
 
-  if (!stats) {
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    navigate('/dashboard-login');
+  };
+
+  if (loading) {
     return <div>Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
     <div className="dashboard">
-      <h1>Real-time Dashboard</h1>
-      <div className="connection-status">
-        WebSocket Status: {wsConnected ? 'Connected' : 'Disconnected'}
-      </div>
-      <div className="stats">
-        <p>Total Responses: {stats.total_responses}</p>
-        <p>Average Response Time: {stats.avg_response_time.toFixed(2)} ms</p>
-        <p>Average Knowledge Rating: {stats.avg_knowledge.toFixed(2)}</p>
-        <p>Average Helpfulness Rating: {stats.avg_helpfulness.toFixed(2)}</p>
-        <p>Average Empathy Rating: {stats.avg_empathy.toFixed(2)}</p>
-        <p>Last Updated: {new Date(stats.last_updated).toLocaleString()}</p>
-      </div>
+      <h1>Dashboard</h1>
+      {dashboardData && (
+        <div>
+          <p>Total Users: {dashboardData.userCount || 'N/A'}</p>
+          <p>Total Responses: {dashboardData.total_responses || 'N/A'}</p>
+          {dashboardData.avg_response_time !== undefined && (
+            <p>Average Response Time: {dashboardData.avg_response_time.toFixed(2)} seconds</p>
+          )}
+          {dashboardData.avg_knowledge !== undefined && (
+            <p>Average Knowledge Rating: {dashboardData.avg_knowledge.toFixed(2)}</p>
+          )}
+          {dashboardData.avg_helpfulness !== undefined && (
+            <p>Average Helpfulness Rating: {dashboardData.avg_helpfulness.toFixed(2)}</p>
+          )}
+          {dashboardData.avg_empathy !== undefined && (
+            <p>Average Empathy Rating: {dashboardData.avg_empathy.toFixed(2)}</p>
+          )}
+          {dashboardData.last_updated && (
+            <p>Last Updated: {new Date(dashboardData.last_updated).toLocaleString()}</p>
+          )}
+        </div>
+      )}
+      <button onClick={handleLogout}>Logout</button>
+      <br />
+      <Link to="/">Back to Home</Link>
     </div>
   );
-}
+};
 
 export default Dashboard;
