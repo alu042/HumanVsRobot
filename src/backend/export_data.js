@@ -2,7 +2,7 @@ const fs = require('fs');
 const { Parser } = require('json2csv');
 const pool = require('./database');
 
-async function exportDataToCSV() {
+async function exportData() {
   try {
     // Connect to the database
     const client = await pool.connect();
@@ -18,25 +18,28 @@ async function exportDataToCSV() {
       dashboard_stats: 'SELECT * FROM dashboard_stats'
     };
 
-    // Execute queries and write results to CSV
+    const exportedData = {};
+
+    // Execute queries and store results
     for (const [tableName, query] of Object.entries(queries)) {
       const result = await client.query(query);
       if (result.rows.length === 0) {
-        console.log(`No data found for ${tableName}. Skipping CSV export.`);
+        console.log(`No data found for ${tableName}. Skipping export.`);
         continue;
       }
-      const parser = new Parser();
-      const csv = parser.parse(result.rows);
-      
-      fs.writeFileSync(`${tableName}.csv`, csv);
-      console.log(`Exported ${tableName} to ${tableName}.csv`);
+      exportedData[tableName] = result.rows;
+      console.log(`Exported ${tableName} data`);
     }
 
     client.release();
     console.log('Data export complete');
+    return exportedData;
   } catch (err) {
     console.error('Error exporting data:', err);
+    throw err;
   }
 }
 
-exportDataToCSV().catch(console.error);
+exportData()
+  .then(data => console.log(JSON.stringify(data, null, 2)))
+  .catch(console.error);
