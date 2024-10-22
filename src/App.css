@@ -199,41 +199,51 @@ input[type="radio"] {
   cursor: help;
   color: var(--medium-gray);
   position: relative;
+  display: inline-block;
 }
 
-.info-icon::before {
-  content: attr(title);
-  position: absolute;
-  bottom: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  padding: 10px;
+.info-icon .tooltip-text {
+  visibility: hidden;
+  width: 220px;
   background-color: var(--dark-gray);
   color: var(--white);
   text-align: center;
   border-radius: 4px;
-  font-size: 14px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
+  padding: 10px;
+  position: absolute;
   z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 14px;
+  line-height: 1.4;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.info-icon:hover::before,
-.info-icon:focus::before {
-  opacity: 1;
+.info-icon .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--dark-gray) transparent transparent transparent;
+}
+
+.info-icon:hover .tooltip-text,
+.info-icon:focus .tooltip-text,
+.info-icon.show-tooltip .tooltip-text {
   visibility: visible;
+  opacity: 1;
 }
 
 /* For mobile devices */
 @media (max-width: 768px) {
-  .info-icon {
-    padding: 5px;
-  }
-
-  .info-icon::before {
-    width: 150px;
+  .info-icon .tooltip-text {
+    width: 200px;
     font-size: 12px;
   }
 }
@@ -463,3 +473,4 @@ input[type="radio"] {
   opacity: 1;
   visibility: visible;
 }
+

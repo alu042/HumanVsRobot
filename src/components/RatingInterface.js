@@ -59,7 +59,6 @@ const RatingInterface = ({
             {criteriaTranslations[criterion] || criterion}
             <span 
               className="info-icon" 
-              title={criteriaDescriptions[criterion]}
               onClick={handleInfoIconClick}
               onKeyPress={(e) => e.key === 'Enter' && handleInfoIconClick(e)}
               tabIndex="0"
@@ -67,6 +66,7 @@ const RatingInterface = ({
               aria-label={`Info om ${criteriaTranslations[criterion] || criterion}`}
             >
               ⓘ
+              <span className="tooltip-text">{criteriaDescriptions[criterion]}</span>
             </span>
           </p>
           <div className="rating-options" role="radiogroup" aria-labelledby={`${criterion}-label`}>
