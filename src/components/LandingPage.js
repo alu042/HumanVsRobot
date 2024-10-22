@@ -148,6 +148,7 @@ const LandingPage = () => {
               <option value="hoyere_4_5">4-5 år ved universitet/høyskole (eller annen tilsvarende nivå ved annen instans)</option>
               <option value="hoyere_6_pluss">6 år eller mer ved universitet/høyskole (eller annen tilsvarende nivå ved annen instans)</option>
               <option value="doktorgrad">Doktorgrad/spesialistgrad på høyere nivå universitet/høyskole</option>
+              <option value="prefer_not_to_say">Ønsker ikke å oppgi</option>
             </select>
           </div>
           <div className="form-group">
