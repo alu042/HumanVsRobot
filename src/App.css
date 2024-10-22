@@ -235,11 +235,55 @@ input[type="radio"] {
 .next-button,
 .finish-button {
   background-color: var(--secondary-color);
+  color: var(--white);
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .next-button:hover,
 .finish-button:hover {
   background-color: var(--secondary-hover-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.next-button:active,
+.finish-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.next-button:disabled,
+.finish-button:disabled {
+  background-color: var(--medium-gray);
+  color: var(--dark-gray);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.next-button::after,
+.finish-button::after {
+  content: '→';
+  margin-left: 8px;
+  font-size: 1.2em;
+  transition: transform 0.3s ease;
+}
+
+.next-button:hover::after,
+.finish-button:hover::after {
+  transform: translateX(4px);
 }
 
 /* Progress Page Styles */
@@ -324,6 +368,8 @@ input[type="radio"] {
   .finish-button {
     width: 100%;
     margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }
 
