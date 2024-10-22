@@ -99,6 +99,17 @@ const getDashboardStats = async (client) => {
   }
 };
 
+// Get user count
+const getUserCount = async (client) => {
+  try {
+    const result = await client.query('SELECT COUNT(*) FROM users');
+    return parseInt(result.rows[0].count);
+  } catch (error) {
+    console.error('Error fetching user count:', error);
+    throw error;
+  }
+};
+
 module.exports = {
   insertUser,
   insertSession,
@@ -107,4 +118,5 @@ module.exports = {
   updateDashboardStats,
   endSession,
   getDashboardStats,
+  getUserCount,
 };
