@@ -79,9 +79,13 @@ const QuestionPage = () => {
     if (currentAnswerIndex < selectedAnswers.length - 1) {
       setCurrentAnswerIndex((prevIndex) => prevIndex + 1);
       // Scroll to the top of the page
-      if (pageRef.current) {
-        pageRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Fallback for older browsers
+      setTimeout(() => {
+        if (pageRef.current) {
+          pageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
     } else {
       finishSurvey();
     }
