@@ -35,6 +35,19 @@ const RatingInterface = ({
     onRatingChange(answerId, questionId, criterion, value, responseTime);
   };
 
+  const criteriaDescriptions = {
+    Kunnskap: "Vurder nøyaktigheten og relevansen av informasjonen som gis i svaret.",
+    Hjelpsomhet: "Evaluer i hvilken grad svaret gir nyttige og praktiske råd eller støtte som kan hjelpe personen som spør.",
+    Empati: "Bedøm svarets evne til å vise forståelse for pasientens følelser og bekymringer."
+  };
+
+  const handleInfoIconClick = (event) => {
+    if (window.innerWidth <= 768) {  // Breakpoint for small screens
+      event.preventDefault();
+      event.target.classList.toggle('show-tooltip');
+    }
+  };
+
   return (
     <div className="rating-interface">
       <div className="answer-text">
@@ -42,7 +55,20 @@ const RatingInterface = ({
       </div>
       {criteria.map((criterion) => (
         <div key={criterion} className="criterion">
-          <p className="criterion-label">{criteriaTranslations[criterion] || criterion}</p>
+          <p className="criterion-label">
+            {criteriaTranslations[criterion] || criterion}
+            <span 
+              className="info-icon" 
+              title={criteriaDescriptions[criterion]}
+              onClick={handleInfoIconClick}
+              onKeyPress={(e) => e.key === 'Enter' && handleInfoIconClick(e)}
+              tabIndex="0"
+              role="button"
+              aria-label={`Info om ${criteriaTranslations[criterion] || criterion}`}
+            >
+              ⓘ
+            </span>
+          </p>
           <div className="rating-options" role="radiogroup" aria-labelledby={`${criterion}-label`}>
             {likertOptions.map((option) => (
               <label key={option.value} className="rating-option">
