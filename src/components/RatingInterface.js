@@ -36,9 +36,9 @@ const RatingInterface = ({
   };
 
   const criteriaDescriptions = {
-    Kunnskap: "Vurder nøyaktigheten og relevansen av informasjonen som gis i svaret.",
-    Hjelpsomhet: "Evaluer i hvilken grad svaret gir nyttige og praktiske råd eller støtte som kan hjelpe personen som spør.",
-    Empati: "Bedøm svarets evne til å vise forståelse for pasientens følelser og bekymringer."
+    knowledge: "Vurder nøyaktigheten og relevansen av informasjonen som gis i svaret.",
+    helpfulness: "Evaluer i hvilken grad svaret gir nyttige og praktiske råd eller støtte som kan hjelpe personen som spør.",
+    empathy: "Bedøm svarets evne til å vise forståelse for pasientens følelser og bekymringer."
   };
 
   const handleInfoIconClick = (event) => {
@@ -66,7 +66,9 @@ const RatingInterface = ({
               aria-label={`Info om ${criteriaTranslations[criterion] || criterion}`}
             >
               ⓘ
-              <span className="tooltip-text">{criteriaDescriptions[criterion]}</span>
+              <span className="tooltip-text">
+                {criteriaDescriptions[criterion] || "Ingen beskrivelse tilgjengelig."}
+              </span>
             </span>
           </p>
           <div className="rating-options" role="radiogroup" aria-labelledby={`${criterion}-label`}>
