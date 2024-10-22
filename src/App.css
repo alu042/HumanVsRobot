@@ -477,12 +477,12 @@ input[type="radio"] {
 /* Start Button Styles */
 .start-button {
   display: inline-block;
-  padding: 16px 32px;
+  padding: 14px 28px;
   background-color: var(--secondary-color);
   color: var(--white);
   border: none;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -491,7 +491,7 @@ input[type="radio"] {
   letter-spacing: 1px;
   margin-top: 30px;
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
 }
 
 .start-button:hover {
