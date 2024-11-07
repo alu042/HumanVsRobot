@@ -25,7 +25,10 @@ const ProgressPage = () => {
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: userData.userId, feedback }),
+        body: JSON.stringify({ 
+          sessionId: userData.sessionId,
+          feedback 
+        }),
       });
 
       if (response.ok) {
