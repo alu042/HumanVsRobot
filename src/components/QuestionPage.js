@@ -93,6 +93,7 @@ const QuestionPage = () => {
 
   const finishSurvey = async () => {
     try {
+      // First submit the ratings
       await fetch('/api/ratings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -101,6 +102,16 @@ const QuestionPage = () => {
           responses,
         }),
       });
+
+      // Then end the session
+      await fetch('/api/end-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: userData.sessionId,
+        }),
+      });
+
       navigate('/progress');
     } catch (error) {
       console.error('Error submitting survey:', error);
