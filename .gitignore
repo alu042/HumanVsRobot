@@ -5,4 +5,3 @@ src/.env
 node_modules/
 .env
 .DS_Store
-data_analysis/
